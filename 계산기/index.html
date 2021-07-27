@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>계산기</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        #result {
+            width: 180px;
+            height: 50px;
+            margin: 5px;
+            text-align: right
+        }
+
+        #operator {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            text-align: center
+        }
+
+        button {
+            width: 50px;
+            height: 50px;
+            margin: 5px
+        }
+    </style>
+</head>
+
+<body>
+    <input readonly id="operator">
+    <input readonly type="number" id="result">
+    <div class="row">
+        <button id="num-7">7</button>
+        <button id="num-8">8</button>
+        <button id="num-9">9</button>
+        <button id="plus">+</button>
+    </div>
+    <div class="row">
+        <button id="num-4">4</button>
+        <button id="num-5">5</button>
+        <button id="num-6">6</button>
+        <button id="minus">-</button>
+    </div>
+    <div class="row">
+        <button id="num-1">1</button>
+        <button id="num-2">2</button>
+        <button id="num-3">3</button>
+        <button id="divide">/</button>
+    </div>
+    <div class="row">
+        <button id="clear">C</button>
+        <button id="num-0">0</button>
+        <button id="calculate">=</button>
+        <button id="multiply">x</button>
+    </div>
+</body>
+<script>
+    let numOne = '';
+    let operator = '';
+    let numTwo = '';
+    const $operator = document.querySelector('#operator');
+    const $result = document.querySelector('#result');
+    //이런식으로 =>가 연달아서 나오는 함수를 고차함수 라고 한다.
+    //고차함수는 return이 함수의 형식인 함수로, 함수이름자체를 연결시켜야하는
+    //addEventListner의 인자로 써야하는데 이용해야 함수도 인자가 필요할 경우 고차함수를 사용한다.
+    const onClickNumber = (number) => () =>{
+        if(operator){
+            numTwo+=number;
+        }else{
+            numOne+=number;
+        }
+        $result.value+=number;
+    };
+    //이런식으로 event로 브라우저한테 직접 값을 받아오는 방법도 있음
+    const onClickNumber_2 = (event)=>{
+        if(operator){
+            numTwo+=event.target.textContent;
+        }else{
+            numOne+=event.target.textContent;
+        }
+        $result.value+=event.target.textContent;
+    };
+    
+    const onClickOperator = (op)=>()=>{
+        if(numOne){
+            operator=op;
+            $operator.value=op;
+            $result.value='';
+        }else{
+            alert('숫자를 먼저 입력해주세요');
+        }
+    };
+    //고차함수를 사용했기 때문에 onClickNumber에 인자가 있어도 함수의 형태로 return임
+    document.querySelector('#num-0').addEventListener('click', onClickNumber('0'));
+    document.querySelector('#num-1').addEventListener('click', onClickNumber('1'));
+    document.querySelector('#num-2').addEventListener('click', onClickNumber('2'));
+    document.querySelector('#num-3').addEventListener('click', onClickNumber('3'));
+    document.querySelector('#num-4').addEventListener('click', onClickNumber('4'));
+    document.querySelector('#num-5').addEventListener('click', onClickNumber('5'));
+    document.querySelector('#num-6').addEventListener('click', onClickNumber_2);
+    document.querySelector('#num-7').addEventListener('click', onClickNumber_2);
+    document.querySelector('#num-8').addEventListener('click', onClickNumber_2);
+    document.querySelector('#num-9').addEventListener('click', onClickNumber_2);
+    document.querySelector('#plus').addEventListener('click', onClickOperator('+'));
+    document.querySelector('#minus').addEventListener('click', onClickOperator('-'));
+    document.querySelector('#divide').addEventListener('click', onClickOperator('/'));
+    document.querySelector('#multiply').addEventListener('click', onClickOperator('*'));
+    document.querySelector('#calculate').addEventListener('click', ()=>{
+        if(numTwo){
+            if(operator=='+'){
+                $result.value=parseInt(numOne)+parseInt(numTwo);
+            }
+            else if(operator=='-'){
+                $result.value=numOne-numTwo;
+            }
+            else if(operator=='*'){
+                $result.value=numOne*numTwo;
+            }
+            else if(operator=='/'){
+                $result.value=numOne/numTwo;
+            }
+        }
+    });
+    document.querySelector('#clear').addEventListener('click', () => {
+        numOne='';
+        numTwo='';
+        operator='';
+        $operator.value='';
+        $result.value='';
+    });
+
+</script>
+
+</html>
