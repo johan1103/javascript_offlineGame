@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>끝말잇기</title>
+</head>
+<body>
+    <div>
+        <span id="order">1</span><span>번째 참가자</span>
+    </div>
+    <div>제시어: <span id="word"></span></div>
+    <input type="text">
+    <button>입력</button>
+    <script>
+        let word;
+        let newWord;
+        let count;
+        let lastWord;
+        const $order = document.querySelector('#order');
+        $order.textContent=1;
+        count=1;
+        const $word = document.querySelector('#word'); //제시한 단어에 맞게 html에 표시해주기 위해 정의
+        const $input = document.querySelector('input');
+        const number = parseInt(prompt('참가 인원'),10);
+        alert(number);
+        const YesorNo=confirm('맞나요?');
+
+        //클릭했을때 input을 추적한 내용을 저장하는 기능
+        document.querySelector('button').addEventListener('click',function(){
+           if(!word){ // 단어가 비어있을때 (시작)
+               word = newWord;
+               lastWord = word[word.length-1];
+               $word.textContent=word;
+               $input.value='';
+               count=count%number;
+               count+=1;
+           } else{//끝말잇기 시작후 단어 넘겨받았을 때
+               word=newWord;
+               if(word[0]==lastWord){
+               lastWord = word[word.length-1];
+               $word.textContent=word;
+               $input.value='';
+               count=count%number;
+               count+=1;
+               }
+               else{
+                   alert("틀렸습니다!",lastWord);
+               }
+           }
+               $order.textContent=count; //html에 표현하기 위해 대입
+        });
+        
+        //input의 내용을 button을 클릭했을때, 저장하기 위해선 input의 내용을 추적해야 하므로 querySelector로 추적
+        $input.addEventListener('input',(event)=>{
+            //event라는 인자는 input의 내부 내용을 함수에 가져올 수 있음
+            //input의 값은 event.target.value로 알 수 있음
+            newWord=event.target.value;
+        });
+        
+    </script>
+</body>
+</html>
