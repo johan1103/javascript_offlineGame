@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>숫자 : <span id="banner"> </span></h1>
+    <form action="" id="form">
+        <input type="text" id="number"><button id="numberButton">입력</button>
+    </form>
+    <div id="log"></div>
+    <script>
+        let number=[0,1,2,3,4,5,6,7,8,9];
+        let list=[];
+        let tmp;
+        let tries=[];
+        let $banner=document.querySelector('#banner');
+        let $form=document.querySelector('#form');
+        let $inputNumber=document.querySelector('#number');
+        let $numberButton=document.querySelector('#numberButton');
+        let $log=document.querySelector('#log');
+
+        function checkInput(value){
+            if(value.length!=4){
+                alert("올바른 값을 입력해주십시요, 길이가 4가 아님, "+String(value).length);
+                $inputNumber.value='';
+                return false;
+            }
+            else if(new Set(value).size!=4){
+                alert("올바른 값을 입력해주십시요, 중복숫자");
+                $inputNumber.value='';
+                return false;
+            }
+            else if(tries.includes(value)){
+                alert("올바른 값을 입력해주십시요, 이미 시도한 숫자");
+                $inputNumber.value='';
+                return false;
+            }
+            else{
+                tries.push(value);
+                return true;
+            }
+        }
+
+        function checkBaseCount(value){
+            let message;
+            if(list.join('')===value){
+                //$log.textContent="Homerun!!!!!"; -->방법1
+                message=document.createTextNode(`Homerun!!!!! 정답은 ${list.join('')}`); //message라는 변수 만들어서
+                $log.append(message); //log뒤에 붙이기
+                //이러한 방법으로는 태그도 생성가능
+                $log.append(document.createElement('br'));//(줄바꿈 태그 뒤에 붙임)
+            }
+            else if(tries.length>=9){
+                message=document.createTextNode(`실패!!!! 정답은 ${list.join('')}`);
+                $log.append(message);
+            }
+
+            let ball=0;
+            let strike=0;
+            for(let i=0;i<4;i++){
+                for(let j=0;j<4;j++){
+                    if(value[i]==list[j]){
+                        if(i==j){
+                            strike+=1;
+                        }
+                        else{
+                            ball+=1;
+                        }
+                    }
+                }
+            }
+            message=document.createTextNode(strike+"-Strike "+ball+"-ball "+value);
+            $log.append(message);
+            $log.append(document.createElement('br'));
+            $banner.textContent=value;
+        }
+
+        for(let i=0;i<4;i++){
+            tmp=Math.floor(Math.random()*100%number.length);
+            list.push(number[tmp]);
+            number.splice(tmp,1);
+        }
+        $form.addEventListener('submit',()=>{
+            event.preventDefault();
+            //기본적으로 form태그는 submit의 기능이 새로고침하면서 정보를 보내주는것인데 그 기능을 없애는 방법
+            const value=$inputNumber.value;
+            $inputNumber.value='';
+            let check=checkInput(value);
+            if(check){
+                checkBaseCount(value);
+            }
+        });
+    </script>
+</body>
+</html>
