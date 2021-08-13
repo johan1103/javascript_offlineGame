@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Gamedev Canvas Workshop</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        canvas {
+            background: #eee;
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="myCanvas" width="480" height="320"></canvas>
+
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let ctx = canvas.getContext("2d");
+        // ctx.beginPath(); 그리기 시작
+        // ctx.rect(20, 40, 50, 50); 사각형그리기 (x,y,가로,세로)
+        // ctx.fillStyle = "#FF0000"; 내부 색 설정
+        // ctx.fill(); 내부 색 채우기
+        // ctx.closePath(); 그리기 끝
+        let x = canvas.width/2;
+        let y = canvas.height-30;
+        let xSpeed=1;
+        let ySpeed=1;
+        let ballRadius=10;
+        let color="03c75a";
+
+        function drawBall(){
+            ctx.clearRect(0,0,canvas.width,canvas.height); //원 지우기
+            ctx.beginPath(); //그리기 시작
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2); //원그리는 위치,크기 지정
+            ctx.fillStyle = color; //color변수에 따라 색칠하기
+            ctx.fill();
+            ctx.closePath(); //그리기 끝
+            if(x+xSpeed>480||x+xSpeed<0){
+                xSpeed=-xSpeed; //x의 벽에 부딛혔을 때 x의 속도 반대로 전환
+                color = "#03c75a"; //색깔 변환
+            }
+            if(y+ySpeed>320||y+ySpeed<0){
+                ySpeed=-ySpeed; //x if문과 동일
+                color = "#0095DD";
+            }
+            x+=xSpeed;
+            y+=ySpeed;
+        }
+        function draw() {
+            drawBall();
+        }
+        setInterval(draw, 10);
+    </script>
+
+</body>
+
+</html>
