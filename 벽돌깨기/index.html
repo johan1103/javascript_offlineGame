@@ -30,35 +30,145 @@
         // ctx.fillStyle = "#FF0000"; 내부 색 설정
         // ctx.fill(); 내부 색 채우기
         // ctx.closePath(); 그리기 끝
-        let x = canvas.width/2;
-        let y = canvas.height-30;
-        let xSpeed=1;
-        let ySpeed=1;
-        let ballRadius=10;
-        let color="03c75a";
+        let x = canvas.width / 2;
+        let y = canvas.height - 10;
+        let xSpeed = 1;
+        let ySpeed = 2;
+        let ballRadius = 10;
+        let color = "03c75a";
 
-        function drawBall(){
-            ctx.clearRect(0,0,canvas.width,canvas.height); //원 지우기
+        let paddleHeight = 10;
+        let paddleWidth = 75;
+        let paddleX = (canvas.width - paddleWidth) / 2;
+        let rightPressed = false;
+        let leftPressed = false;
+
+        let brickRowCount = 3;
+        let brickColumnCount = 5;
+        let brickWidth = 75;
+        let brickHeight = 20;
+        let brickPadding = 15;
+        let brickOffsetTop = 30;
+        let brickOffsetLeft = 20;
+        let bricks = [];
+        let ballArrX;
+        let ballArrY;
+
+        for (let c = 0; c < brickColumnCount; c++) {
+            bricks[c] = [];
+            for (let r = 0; r < brickRowCount; r++) {
+                bricks[c][r] = { x: brickOffsetTop + c * (brickPadding + brickWidth), y: brickOffsetLeft + r * (brickPadding + brickHeight), status: 1 };
+            }
+        }
+        function drawBricks() {
+            for (let c = 0; c < brickColumnCount; c++) {
+                for (let r = 0; r < brickRowCount; r++) {
+                    if (bricks[c][r].status == 1) {
+                        ctx.beginPath();
+                        ctx.rect(bricks[c][r].x, bricks[c][r].y, brickWidth, brickHeight);
+                        ctx.fillStyle = "#0095DD";
+                        ctx.fill();
+                        ctx.closePath();
+                    }
+                }
+            }
+        }
+
+        function bounceWall() {
+            if (x + xSpeed > 480 || x + xSpeed < 0) {
+                xSpeed = -xSpeed; //x의 벽에 부딛혔을 때 x의 속도 반대로 전환
+                color = "#03c75a"; //색깔 변환
+            }
+            else if (y + ySpeed < 0 || y + ySpeed > canvas.height - ballRadius) {
+                ySpeed = -ySpeed; //x if문과 동일
+                ySpeed *= 0.9;
+                color = "#0095DD";
+            }
+            else if (y + ySpeed > canvas.height - ballRadius) {
+                alert("GAME OVER");
+                x = canvas.width;
+                y = ballRadius;
+                document.location.reload();
+            }
+        }
+        function bouncePaddle() {
+            if (x > paddleX - ballRadius && x < paddleX + paddleWidth + ballRadius) {
+                if (y > canvas.height * 3 / 4 && y < canvas.height * 3 / 4 + 10) {
+                    ySpeed = -ySpeed;
+                    ySpeed *= 1.2;
+                    color = "yellow";
+                }
+            }
+        }
+        function bounceBrick() {
+            for (let c = 0; c < brickColumnCount; c++) {
+                for (let r = 0; r < brickRowCount; r++) {
+                    if (bricks[c][r].status == 0) {
+                        continue;
+                    }
+                    if (x + ballRadius > bricks[c][r].x && x + ballRadius < bricks[c][r].x + brickWidth) {
+                        if (y + ballRadius > bricks[c][r].y && y - ballRadius < bricks[c][r].y + brickHeight) {
+                            ySpeed = -ySpeed;
+                            color = "orange";
+                            bricks[c][r].status = 0;
+                        }
+                    }
+                }
+            }
+        }
+        function drawBall() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); //원 지우기
             ctx.beginPath(); //그리기 시작
             ctx.arc(x, y, ballRadius, 0, Math.PI * 2); //원그리는 위치,크기 지정
             ctx.fillStyle = color; //color변수에 따라 색칠하기
             ctx.fill();
             ctx.closePath(); //그리기 끝
-            if(x+xSpeed>480||x+xSpeed<0){
-                xSpeed=-xSpeed; //x의 벽에 부딛혔을 때 x의 속도 반대로 전환
-                color = "#03c75a"; //색깔 변환
-            }
-            if(y+ySpeed>320||y+ySpeed<0){
-                ySpeed=-ySpeed; //x if문과 동일
-                color = "#0095DD";
-            }
-            x+=xSpeed;
-            y+=ySpeed;
+            bounceWall();
+            bouncePaddle();
+            bounceBrick();
+            x += xSpeed;
+            y += ySpeed;
         }
+
+        function drawPaddle() {
+            if (rightPressed && paddleX < canvas.width - paddleWidth) {
+                paddleX += 7;
+            }
+            else if (leftPressed && paddleX > 0) {
+                paddleX -= 7;
+            }
+            ctx.beginPath();
+            ctx.rect(paddleX, canvas.height - canvas.height / 4, paddleWidth, paddleHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        }
+        function keyDownHandler(e) {
+            if (e.keyCode == 39) {
+                rightPressed = true;
+            }
+            else if (e.keyCode == 37) {
+                leftPressed = true;
+            }
+        }
+
+        function keyUpHandler(e) {
+            if (e.keyCode == 39) {
+                rightPressed = false;
+            }
+            else if (e.keyCode == 37) {
+                leftPressed = false;
+            }
+        }
+
         function draw() {
             drawBall();
+            drawPaddle();
+            drawBricks();
         }
         setInterval(draw, 10);
+        document.addEventListener("keydown", keyDownHandler, false);
+        document.addEventListener("keyup", keyUpHandler, false);
     </script>
 
 </body>
